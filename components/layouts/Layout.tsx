@@ -15,7 +15,7 @@ export const Layout: FC<PropsWithChildren<Props>> = ({ title = 'OpenJira by Oswa
       </Head>
 
       <Navbar />
-      {/* <Sidebar /> */}
+      <Sidebar />
 
       <Box sx={{ padding: '10px 20px' }}>
         { children }
