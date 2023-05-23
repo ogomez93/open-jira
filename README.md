@@ -22,3 +22,7 @@ Or run the production build:
 yarn build
 yarn start
 ```
+
+### Seed the database (optional)
+
+Visit `localhost:3000/api/seed`
