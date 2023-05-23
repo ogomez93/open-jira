@@ -7,6 +7,12 @@ MongoDB local URL:
 ```
 mongodb://localhost:27017/entriesdb
 ```
+### Setup environment variables
+
+Create a copy of `.env.template`, rename it to `.env`, and put values to the environment variables
+
+### Run the project
+
 To run the project, either go with the development version:
 ```bash
 yarn dev
