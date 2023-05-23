@@ -11,6 +11,12 @@ mongodb://localhost:27017/entriesdb
 
 Create a copy of `.env.template`, rename it to `.env`, and put values to the environment variables
 
+### Install the dependencies
+
+```bash
+yarn install
+```
+
 ### Run the project
 
 To run the project, either go with the development version:
