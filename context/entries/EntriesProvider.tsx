@@ -1,7 +1,8 @@
 import { FC, PropsWithChildren, useReducer } from 'react'
-import { EntriesContext, entriesReducer } from './';
-import { Entry } from '../../interfaces';
 import { v4 as uuidv4 } from 'uuid'
+
+import { EntriesContext, entriesReducer } from './'
+import { Entry } from '../../interfaces'
 
 export interface EntriesState {
   entries: Entry[]
@@ -11,19 +12,19 @@ const Entries_INITIAL_STATE: EntriesState = {
   entries: [
     {
       _id: uuidv4(),
-      description: 'First entry',
+      description: 'Pending card',
       status: 'pending',
       createdAt: Date.now()
     },
     {
       _id: uuidv4(),
-      description: 'Second entry',
+      description: 'In Progress card',
       status: 'in-progress',
       createdAt: Date.now() - 1000000
     },
     {
       _id: uuidv4(),
-      description: 'Third entry',
+      description: 'Finished card',
       status: 'finished',
       createdAt: Date.now() - 100000
     },

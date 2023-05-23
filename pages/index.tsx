@@ -8,9 +8,9 @@ const Home: NextPage = () => {
   return (
     <Layout title='Home - OpenJira'>
       <Grid container spacing={2}>
-        <CardsColumn title='Pending' />
-        <CardsColumn title='In Progress' />
-        <CardsColumn title='Completed' />
+        <CardsColumn status='pending' title='Pending' />
+        <CardsColumn status='in-progress' title='In Progress' />
+        <CardsColumn status='finished' title='Completed' />
       </Grid>
     </Layout>
   )
