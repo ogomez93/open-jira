@@ -12,6 +12,7 @@ import { Layout } from '../../components/layouts'
 import { Entry, EntryStatus } from '../../interfaces/entries'
 import { dbEntries } from '../../database'
 import { EntriesContext } from '../../context/entries'
+import { dateFunctions } from '../../helpers'
 
 const validStatuses: EntryStatus[] = ['pending', 'in-progress', 'finished']
 
@@ -45,7 +46,10 @@ const EntryPage: NextPage<Props> = ({ entry }) => {
       <Grid container justifyContent='center' sx={{ marginTop: 2 }}>
         <Grid item xs={12} sm={8} md={6}>
           <Card>
-            <CardHeader title={`Entry: ${description}`} subheader={`Created ${entry.createdAt} minutes ago`} />
+            <CardHeader
+              title={`Entry: ${description}`}
+              subheader={`Created ${dateFunctions.getFormattedDistanceToNow(entry.createdAt)}`}
+            />
 
             <CardContent>
               <TextField
