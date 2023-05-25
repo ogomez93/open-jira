@@ -1,5 +1,5 @@
 import { ChangeEvent, useMemo, useState } from 'react'
-import { NextPage } from 'next'
+import { GetServerSideProps, NextPage } from 'next'
 
 import {
   Button, Card, CardActions, CardContent, CardHeader, FormControl, FormControlLabel,
@@ -9,13 +9,18 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 
 import { Layout } from '../../components/layouts'
-import { EntryStatus } from '../../interfaces/entries'
+import { Entry, EntryStatus } from '../../interfaces/entries'
+import { dbEntries } from '../../database'
 
 const validStatuses: EntryStatus[] = ['pending', 'in-progress', 'finished']
 
-const EntryPage: NextPage = () => {
-  const [inputValue, setInputValue] = useState<string>('')
-  const [status, setStatus] = useState<EntryStatus>('pending')
+interface Props {
+  entry: Entry
+}
+
+const EntryPage: NextPage<Props> = ({ entry }) => {
+  const [inputValue, setInputValue] = useState<string>(entry.description)
+  const [status, setStatus] = useState<EntryStatus>(entry.status)
   const [touched, setTouched] = useState<boolean>(false)
 
   const isNotValid = useMemo(() => inputValue.length <= 0 && touched, [inputValue, touched])
@@ -33,11 +38,11 @@ const EntryPage: NextPage = () => {
   }
 
   return (
-    <Layout title=''>
+    <Layout title={`${inputValue.substring(0, 20)}...`}>
       <Grid container justifyContent='center' sx={{ marginTop: 2 }}>
         <Grid item xs={12} sm={8} md={6}>
           <Card>
-            <CardHeader title={`Entry: ${inputValue}`} subheader={`Created ${2} minutes ago`} />
+            <CardHeader title={`Entry: ${inputValue}`} subheader={`Created ${entry.createdAt} minutes ago`} />
 
             <CardContent>
               <TextField
@@ -96,6 +101,27 @@ const EntryPage: NextPage = () => {
       </IconButton>
     </Layout>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const { id } = params as { id: string }
+
+  const entry = await dbEntries.getEntryById(id)
+
+  if (!entry) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
+      }
+    }
+  }
+  
+  return {
+    props: {
+      entry
+    }
+  }
 }
 
 export default EntryPage
