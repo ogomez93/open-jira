@@ -1,4 +1,4 @@
-import { ChangeEvent, useMemo, useState } from 'react'
+import { ChangeEvent, useContext, useMemo, useState } from 'react'
 import { GetServerSideProps, NextPage } from 'next'
 
 import {
@@ -11,6 +11,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import { Layout } from '../../components/layouts'
 import { Entry, EntryStatus } from '../../interfaces/entries'
 import { dbEntries } from '../../database'
+import { EntriesContext } from '../../context/entries'
 
 const validStatuses: EntryStatus[] = ['pending', 'in-progress', 'finished']
 
@@ -19,30 +20,32 @@ interface Props {
 }
 
 const EntryPage: NextPage<Props> = ({ entry }) => {
-  const [inputValue, setInputValue] = useState<string>(entry.description)
+  const [description, setDescription] = useState<string>(entry.description)
   const [status, setStatus] = useState<EntryStatus>(entry.status)
   const [touched, setTouched] = useState<boolean>(false)
 
-  const isNotValid = useMemo(() => inputValue.length <= 0 && touched, [inputValue, touched])
+  const { updateEntry } = useContext(EntriesContext)
+
+  const isNotValid = useMemo(() => description.length <= 0 && touched, [description, touched])
 
   const handleDescriptionChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setInputValue(e.target.value)
+    setDescription(e.target.value)
 
   const handleStatusChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setStatus(e.target.value as EntryStatus)
 
   const handleSave = () => {
-    if (inputValue.length === 0) return
+    if (description.trim().length === 0) return
 
-    // todo: persist the data
+    updateEntry({ ...entry, description, status } as Entry, true)
   }
 
   return (
-    <Layout title={`${inputValue.substring(0, 20)}...`}>
+    <Layout title={`${description.substring(0, 20)}...`}>
       <Grid container justifyContent='center' sx={{ marginTop: 2 }}>
         <Grid item xs={12} sm={8} md={6}>
           <Card>
-            <CardHeader title={`Entry: ${inputValue}`} subheader={`Created ${entry.createdAt} minutes ago`} />
+            <CardHeader title={`Entry: ${description}`} subheader={`Created ${entry.createdAt} minutes ago`} />
 
             <CardContent>
               <TextField
@@ -52,7 +55,7 @@ const EntryPage: NextPage<Props> = ({ entry }) => {
                 multiline
                 placeholder='New entry'
                 label='New entry'
-                value={inputValue}
+                value={description}
                 onBlur={() => setTouched(true)}
                 onChange={handleDescriptionChange}
                 helperText={isNotValid && 'Enter a value'}
@@ -62,11 +65,7 @@ const EntryPage: NextPage<Props> = ({ entry }) => {
               <FormControl>
                 <FormLabel>Status:</FormLabel>
 
-                <RadioGroup
-                  row
-                  onChange={handleStatusChange}
-                  value={status}
-                >
+                <RadioGroup row onChange={handleStatusChange} value={status}>
                   {
                     validStatuses.map(option => (
                       <FormControlLabel
@@ -87,7 +86,7 @@ const EntryPage: NextPage<Props> = ({ entry }) => {
                 variant='outlined'
                 fullWidth
                 onClick={handleSave}
-                disabled={inputValue.length <= 0}
+                disabled={description.length <= 0}
               >
                 Save
               </Button>
