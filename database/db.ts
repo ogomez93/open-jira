@@ -29,9 +29,9 @@ export const connect = async () => {
     await mongoose.disconnect()
   }
 
-  await mongoose.connect(process.env.MONGO_URL || '')
+  await mongoose.connect(process.env.MONGODB_URI || '')
   mongoConnection.isConnected = 1
-  console.log('Connected to MongoDB: ', process.env.MONGO_URL)
+  console.log('Connected to MongoDB: ', process.env.MONGODB_URI)
 }
 
 export const disconnect = async () => {
