@@ -6,8 +6,9 @@ import { handleBadRequest, isValidMongoId } from './helpers'
 // This function can be marked `async` if using `await` inside
 export function middleware(req: NextRequest) {
   if (req.nextUrl.pathname.startsWith('/api/entries/')) {
-    const id = req.nextUrl.pathname.replace('/api/entries/', '')
-    
+    const { pathname } = req.nextUrl
+    const id = pathname.replace('/api/entries/', '')
+
     if (!isValidMongoId(id)) return handleBadRequest(req, `?message=${id} is not a valid MongoID`)
   }
 

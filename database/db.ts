@@ -14,7 +14,7 @@ const mongoConnection = {
 
 export const connect = async () => {
   if (mongoConnection.isConnected === 1) {
-    console.log('Already connnected')
+    console.log('Already connected')
     return
   }
 
