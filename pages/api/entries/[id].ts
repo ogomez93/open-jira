@@ -19,6 +19,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
       return getEntry(req, res)
     case 'PUT':
       return updateEntry(req, res)
+    case 'DELETE':
+      return deleteEntry(req, res)
     default:
       return res.status(400).json({ message: 'Unexisting method: ' + req.method })
   }
@@ -40,20 +42,44 @@ const updateEntry = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const { id } = req.query
 
   await db.connect()
-  const entryToObject = await Entry.findById(id)
-  if (!entryToObject) {
+  const entry = await Entry.findById(id)
+  if (!entry) {
     await db.disconnect()
     return res.status(400).json({ message: `There's no entry with id: ${id}` })
   }
 
   const {
-    description = entryToObject.description,
-    status = entryToObject.status
+    description = entry.description,
+    status = entry.status
   } = req.body
   try {
     const updatedEntry = await Entry.findByIdAndUpdate(id, { description, status }, { runValidators: true, new: true })
     await db.disconnect()
     return res.status(200).json(updatedEntry!)
+  } catch (error) {
+    console.log(error)
+    await db.disconnect()
+    if (error instanceof Error.ValidationError) {
+      res.status(400).json({ message: error.errors.status.message })
+    }
+    res.status(500).json({ message: 'Internal server error' })
+  }
+}
+
+const deleteEntry = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+  const { id } = req.query
+
+  await db.connect()
+  const entry = await Entry.findById(id)
+  if (!entry) {
+    await db.disconnect()
+    return res.status(400).json({ message: `There's no entry with id: ${id}` })
+  }
+
+  try {
+    await Entry.deleteOne({ _id: id })
+    await db.disconnect()
+    return res.status(200).json(entry)
   } catch (error) {
     console.log(error)
     await db.disconnect()

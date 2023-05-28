@@ -1,5 +1,6 @@
 import { ChangeEvent, useContext, useMemo, useState } from 'react'
 import { GetServerSideProps, NextPage } from 'next'
+import { useRouter } from 'next/router'
 
 import {
   Button, Card, CardActions, CardContent, CardHeader, FormControl, FormControlLabel,
@@ -24,8 +25,9 @@ const EntryPage: NextPage<Props> = ({ entry }) => {
   const [description, setDescription] = useState<string>(entry.description)
   const [status, setStatus] = useState<EntryStatus>(entry.status)
   const [touched, setTouched] = useState<boolean>(false)
+  const router = useRouter()
 
-  const { updateEntry } = useContext(EntriesContext)
+  const { deleteEntry, updateEntry } = useContext(EntriesContext)
 
   const isNotValid = useMemo(() => description.length <= 0 && touched, [description, touched])
 
@@ -39,6 +41,13 @@ const EntryPage: NextPage<Props> = ({ entry }) => {
     if (description.trim().length === 0) return
 
     updateEntry({ ...entry, description, status } as Entry, true)
+  }
+
+  const handleDelete = async () => {
+    if (!confirm(`Are you sure that you want to delete "${description}"?`)) return
+
+    const deleted = await deleteEntry(entry._id)
+    if (deleted) router.push('/')
   }
 
   return (
@@ -99,7 +108,10 @@ const EntryPage: NextPage<Props> = ({ entry }) => {
         </Grid>
       </Grid>
 
-      <IconButton sx={{ position: 'fixed', bottom: 30, right: 30, backgroundColor: 'error.dark' }}>
+      <IconButton
+        onClick={handleDelete}
+        sx={{ position: 'fixed', bottom: 30, right: 30, backgroundColor: 'error.dark' }}
+      >
         <DeleteOutlinedIcon />
       </IconButton>
     </Layout>
