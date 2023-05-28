@@ -1,9 +1,12 @@
+import { useContext } from 'react'
+
+import { NextComponentType, NextPageContext } from 'next'
 import type { AppProps } from 'next/app'
 
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { SnackbarProvider } from 'notistack'
 
-import { UIProvider } from '../context/ui'
+import { UIContext, UIProvider } from '../context/ui'
 import { EntriesProvider } from '../context/entries'
 
 import '../styles/globals.css'
@@ -14,13 +17,20 @@ function MyApp({ Component, pageProps }: AppProps) {
     <SnackbarProvider maxSnack={3}>
       <EntriesProvider>
         <UIProvider>
-          <ThemeProvider theme={darkTheme}>
-            <CssBaseline />
-            <Component {...pageProps} />
-          </ThemeProvider>
+          <ThemedApp Component={Component} pageProps={pageProps} />
         </UIProvider>
       </EntriesProvider>
     </SnackbarProvider>
+  )
+}
+
+function ThemedApp({ Component, pageProps }: { Component: NextComponentType<NextPageContext, any, any>, pageProps: any }) {
+  const { isDarkTheme } = useContext(UIContext)
+  return (
+    <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
+      <CssBaseline />
+      <Component {...pageProps} />
+    </ThemeProvider>
   )
 }
 
