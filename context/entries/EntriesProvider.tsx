@@ -2,8 +2,9 @@ import { FC, PropsWithChildren, useEffect, useReducer } from 'react'
 import { useSnackbar } from 'notistack'
 
 import { EntriesContext, entriesReducer } from './'
-import { Entry } from '../../interfaces'
 import { entriesApi } from '../../api_client'
+import { Entry } from '../../interfaces'
+import { stringHelpers } from '../../helpers'
 
 export interface EntriesState {
   entries: Entry[]
@@ -20,7 +21,7 @@ export const EntriesProvider:FC<PropsWithChildren> = ({ children }) => {
   const callSnackbar = (text: string) => {
     enqueueSnackbar(text, {
       variant: 'success',
-      autoHideDuration: 1000,
+      autoHideDuration: 1500,
       anchorOrigin: {
         vertical: 'top',
         horizontal: 'right'
@@ -49,7 +50,7 @@ export const EntriesProvider:FC<PropsWithChildren> = ({ children }) => {
     try {
       const { data } = await entriesApi.delete<Entry>(`/entries/${_id}`)
       dispatch({ type: '[Entries] Delete-Entry', payload: _id })
-      callSnackbar(`Deleted entry: ${data.description}`)
+      callSnackbar(`Deleted entry: ${stringHelpers.shorten(data.description)}`)
       success = true
     } catch (error) {
       console.log(error)
