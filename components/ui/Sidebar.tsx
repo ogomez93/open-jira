@@ -21,6 +21,7 @@ export const Sidebar = () => {
       <Box sx={{ width: 250 }}>
         <Box sx={{ padding: '5px 10px' }}>
           <Typography variant='h4'>Menu</Typography>
+          <Typography>(demonstrational only)</Typography>
         </Box>
 
         <List>
